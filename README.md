@@ -1,4 +1,4 @@
-# Stroke Lab
+# AquaMotion
 
 Freestyle swimming technique analysis from a phone video. Pick a clip, the
 backend tracks 33 body joints with MediaPipe pose estimation, and the app shows
@@ -28,8 +28,10 @@ In dev the app assumes the backend runs on the same machine as Metro (port
 8000). Point it elsewhere with:
 
 ```sh
-EXPO_PUBLIC_API_URL=http://192.168.1.20:8000 npx expo start
+EXPO_PUBLIC_API_URL=http://10.10.20.251:8000 npx expo start
 ```
+
+s
 
 ## Filming for good results
 
@@ -47,4 +49,5 @@ below the shoulder–ankle line, head lifted, bent-knee kick (< 115°), kick
 depth, straight-arm pull, dropped elbow at the catch, uneven stroke rhythm.
 Each area starts at 96; a major fault costs 18, a minor one 8; overall is
 40% arms + 30% legs + 30% body line.
+
 # swimming-tracker-app

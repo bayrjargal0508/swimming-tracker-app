@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+python-multipart
+# ponytail: mediapipe 1.0.x aborts ("graph_service.h Check failed") on macOS arm64 — unpin once fixed upstream
+mediapipe>=0.10.14,<1.0
+numpy
