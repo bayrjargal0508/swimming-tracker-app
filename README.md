@@ -1,56 +1,50 @@
-# Welcome to your Expo app 👋
+# Stroke Lab
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Freestyle swimming technique analysis from a phone video. Pick a clip, the
+backend tracks 33 body joints with MediaPipe pose estimation, and the app shows
+a skeleton overlay, timestamped faults, and arm / leg / body-line scores — all
+derived from measured landmarks, never invented.
 
-## Get started
+## Run the backend
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+cd backend
+python3.12 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+First start downloads the MediaPipe pose model (~9 MB). Smoke test:
+`.venv/bin/python test_smoke.py`.
 
-### Other setup steps
+## Run the app
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```sh
+npm install
+npx expo start
+```
 
-## Learn more
+In dev the app assumes the backend runs on the same machine as Metro (port
+8000). Point it elsewhere with:
 
-To learn more about developing your project with Expo, look at the following resources:
+```sh
+EXPO_PUBLIC_API_URL=http://192.168.1.20:8000 npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Filming for good results
 
-## Join the community
+- Side of the pool, camera at water level, whole body in frame.
+- One swimmer, freestyle, a few strokes or more (first 60 s are analyzed).
+- MP4 or MOV, up to 300 MB.
 
-Join our community of developers creating universal apps.
+If tracking is unreliable (splash, glare, distance), the app says so and
+withholds scores instead of guessing.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## How scoring works
+
+Rules over the joint time series flag faults with timestamps: hips sinking
+below the shoulder–ankle line, head lifted, bent-knee kick (< 115°), kick
+depth, straight-arm pull, dropped elbow at the catch, uneven stroke rhythm.
+Each area starts at 96; a major fault costs 18, a minor one 8; overall is
+40% arms + 30% legs + 30% body line.
+# swimming-tracker-app
